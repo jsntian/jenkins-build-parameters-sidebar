@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Jenkins 构建历史显示全部参数
 // @namespace    local.jenkins.build-parameters
-// @version      1.3.2
+// @version      1.3.3
 // @description  在 Jenkins 左侧 Builds 构建记录中显示完整构建参数；逗号分隔值以紧凑标签展示，超长列表可折叠
-// @match        https://jenkins.*.com/*
+// @match        https://xx.com/*
 // @run-at       document-idle
 // @grant        none
 // ==/UserScript==
@@ -11,9 +11,9 @@
    (() => {
      'use strict';
 
-     // 将 @match 里的 jenkins.example.com 改成实际 Jenkins 域名。
      const PARAM_CLASS = 'tm-jenkins-build-parameters';
      const LOG_PREFIX = '[Jenkins Build Parameters]';
+     const DEBUG_PREFIX = `${LOG_PREFIX} [debug-4c9b]`;
      const loadedBuilds = new Map();
      // 同一构建可能有多个链接（状态图标、编号、时间戳），按构建维度去重。
      // 记录的是面板元素本身：Jenkins 重绘构建行时面板会被移除，
@@ -24,6 +24,20 @@
      console.info(`${LOG_PREFIX} script started`, {
        href: location.href,
        readyState: document.readyState,
+       hasFindLastIndex: typeof [].findLastIndex === 'function',
+       userAgent: navigator.userAgent,
+     });
+     window.addEventListener('error', event => {
+       console.error(`${DEBUG_PREFIX} uncaught error`, {
+         message: event.message,
+         source: event.filename,
+         line: event.lineno,
+         column: event.colno,
+         error: event.error,
+       });
+     });
+     window.addEventListener('unhandledrejection', event => {
+       console.error(`${DEBUG_PREFIX} unhandled rejection`, event.reason);
      });
      addStyle();
 
@@ -298,6 +312,7 @@
        } catch (error) {
          console.error(`${LOG_PREFIX} failed`, {
            url: link.href,
+           message: error instanceof Error ? error.message : String(error),
            error,
          });
        }
@@ -509,6 +524,16 @@
      }
 
      observe(document);
+
+     setTimeout(() => {
+       console.info(`${DEBUG_PREFIX} initial status`, {
+         buildLinks: [...document.querySelectorAll('a[href]')]
+           .filter(isBuildLink)
+           .map(link => link.href),
+         panels: document.querySelectorAll(`.${PARAM_CLASS}`).length,
+         cachedBuilds: loadedBuilds.size,
+       });
+     }, 5000);
 
      // 兜底：Jenkins 会定时刷新最新构建行，重绘后面板可能丢失。
      // 这里定期重扫，命中缓存不会产生额外网络请求。
