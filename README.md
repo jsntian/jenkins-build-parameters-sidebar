@@ -2,14 +2,16 @@
 
 A Tampermonkey userscript that displays the complete parameters of each Jenkins build directly in the **Builds** sidebar.
 
+[简体中文](./README.zh-CN.md)
+
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 ## Features
 
 - Displays parameter names and values in a readable two-column layout.
 - Requests data through Jenkins' built-in build JSON API using your existing browser session.
-- Renders every parameter value in full: long values wrap rather than being truncated.
-- Displays comma-separated values one value per line—useful for deployment target lists such as `server=a,b,c`.
+- Wraps long plain values; comma-separated string values appear as tags, with long individual tags truncated visually.
+- Shows up to 12 comma-separated values initially, with a button to expand the rest—useful for deployment target lists such as `server=a,b,c`.
 - Watches dynamically loaded build-history entries, including entries exposed through open Shadow DOM roots.
 - Does not require a Jenkins API token or save credentials.
 
@@ -48,11 +50,6 @@ Your current Jenkins browser login is used automatically via same-origin `fetch`
 ## Development
 
 No build tooling or dependencies are required. Edit `jenkins-build-parameters-sidebar.user.js`, then use Tampermonkey's editor to test it.
-
-Before publishing, replace these metadata placeholders in the script:
-
-- `https://github.com/your-github-username/jenkins-build-parameters-sidebar`
-- `Your Name`
 
 ## License
 
