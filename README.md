@@ -15,6 +15,10 @@ A Tampermonkey userscript that displays the complete parameters of each Jenkins 
 - Watches dynamically loaded build-history entries, including entries exposed through open Shadow DOM roots.
 - Does not require a Jenkins API token or save credentials.
 
+## Preview
+
+![Build parameters displayed on a Jenkins page and in the Builds sidebar](./ScreenShot_2026-10-13_103226_519@2x.png)
+
 > **Security note:** The script intentionally displays all parameter values. Do not use it where sensitive parameters (passwords, tokens, secrets, etc.) could be visible to people who should not see them.
 
 ## Installation
